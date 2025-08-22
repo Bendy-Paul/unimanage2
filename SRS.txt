@@ -1,0 +1,397 @@
+unimanage/
+├── admin/
+│   ├── api/
+│   │   └── search_students.php
+│   ├── dashboard.php
+│   ├── manage_announcements.php
+│   ├── manage_courses.php
+│   ├── manage_events.php
+│   ├── manage_results.php
+│   ├── manage_timetable.php
+│   └── manage_users.php
+│
+├── student/
+│   ├── dashboard.php
+│   ├── announcements.php
+│   ├── events.php
+│   ├── results.php
+│   ├── timetable.php
+│   └── profile.php
+│
+├── includes/
+│   ├── config.php
+│   ├── db_connect.php
+│   ├── auth.php
+│   ├── functions.php
+│   ├── header.php
+│   ├── footer.php
+│   └── validation.php
+│
+├── assets/
+│   ├── css/
+│   │   ├── style.css
+│   │   └── bootstrap.min.css
+│   ├── js/
+│   │   ├── main.js
+│   │   ├── jquery.min.js
+│   │   └── bootstrap.bundle.min.js
+│   └── img/
+│       ├── logo.png
+│       └── favicon.ico
+│
+├── docs/
+│   └── SRS.txt
+│
+├── tests/
+│   ├── unit/
+│   └── integration/
+│
+- FR-2.7 Manage Timetable: Admin shall create/edit/delete timetable slots and view schedules.
+- FR-2.8 Search Students API: Admin shall be able to search students via an API endpoint for use in management pages (autocomplete/search helper).
+
+FR-3 Student Features
+- FR-3.1 Student Dashboard: Students shall view their personalized dashboard.
+- FR-3.2 Announcements: Students shall view current announcements.
+- FR-3.3 Events: Students shall view events and event details.
+- FR-3.4 Results: Students shall view their own results.
+- FR-3.5 Timetable: Students shall view their timetable.
+- FR-3.6 Profile: Students shall view and edit their own profile information.
+
+FR-4 Guest Access
+- FR-4.1 Public Announcements/Events: Guests may view public announcements and events without logging in.
+
+FR-5 Validation & Error Handling
+- FR-5.1 Forms shall validate inputs server-side and where possible client-side.
+- FR-5.2 The system shall present meaningful error messages on validation failures.
+
+FR-6 Audit & Logging (basic)
+- FR-6.1 The system shall record administrative create/update/delete actions in a server-side log (at minimum file-based logs).
+
+4. Non-functional Requirements
+------------------------------
+NFR-1 Performance
+- Pages (dashboard, lists) must respond within 2 seconds under typical load (single-server, small institution dataset of a few thousand records).
+
+NFR-2 Security
+- Use server-side session management.
+- Protect against SQL injection: use parameterized queries or prepared statements.
+- Protect against XSS: escape user-generated content rendered in pages.
+- Passwords must be stored using a secure hash (e.g., bcrypt) if authentication is implemented locally.
+- Sensitive pages must require authentication and authorize by role (Admin vs Student).
+
+NFR-3 Availability
+- The app must be deployable on a standard LAMP/WAMP/XAMPP stack and tolerate normal server restarts with minimal startup time.
+
+NFR-4 Usability
+- UI must be simple and consistent across admin and student sections.
+- Forms should include helpful labels and validation feedback.
+
+NFR-5 Maintainability
+- Codebase should follow a clear directory structure (as present: `admin/`, `student/`, `includes/`, `assets/`).
+- Use comments and modular includes for shared components (header/footer/db_connect).
+
+NFR-6 Portability
+- The system should run on common PHP versions supported by the project (documented in stack) and be portable between local and hosted servers.
+
+5. System Models
+----------------
+This section contains high-level models: a Use Case diagram and a simple ER conceptual diagram.
+
+5.1 Use Case Diagram (ASCII)
+
+  [Admin]                [Student]             [Guest]
+    |                       |                    |
+    |--(Login)-------------- | --(Login)--------- |
+    |                       |                    |
+    |--(View Dashboard)     |--(View Dashboard)  |--(View Public Announcements)
+    |--(Manage Users)       |--(View Announcements)
+    |--(Manage Announcements)|--(View Events)
+    |--(Manage Courses)     |--(View Results)
+    |--(Manage Events)      |--(View Timetable)
+    |--(Manage Results)     |--(View Profile)
+    |--(Manage Timetable)   |--(Edit Profile)
+    |--(Search Students API)
+    |--(Logout)             |--(Logout)
+
+5.2 Use Case Diagram (PlantUML)
+
+@startuml
+left to right direction
+actor Admin
+actor Student
+actor Guest
+
+package "UniManage" {
+  (Login)
+  (Logout)
+
+  (View Dashboard)
+
+  (Manage Users)
+  (Manage Announcements)
+  (Manage Courses)
+  (Manage Events)
+  (Manage Results)
+  (Manage Timetable)
+  (Search Students API)
+
+  (View Announcements)
+  (View Events)
+  (View Event Details)
+  (View Results)
+  (View Timetable)
+  (View Profile)
+  (Edit Profile)
+}
+
+Admin --> (Login)
+Student --> (Login)
+Guest --> (View Announcements)
+
+Admin --> (View Dashboard)
+Admin --> (Manage Users)
+Admin --> (Manage Announcements)
+Admin --> (Manage Courses)
+Admin --> (Manage Events)
+Admin --> (Manage Results)
+Admin --> (Manage Timetable)
+Admin --> (Search Students API)
+Admin --> (Logout)
+
+Student --> (View Dashboard)
+Student --> (View Announcements)
+Student --> (View Events)
+Student --> (View Event Details)
+Student --> (View Results)
+Student --> (View Timetable)
+Student --> (View Profile)
+Student --> (Edit Profile)
+Student --> (Logout)
+
+"Search Students API" ..> (Manage Users) : <<include>>
+(Login) <|-- (Manage Users)
+@enduml
+
+5.3 Conceptual ER Diagram (ASCII)
+
+Entities:
+- User (UserID, username, password_hash, role, email, first_name, last_name)
+- Student (StudentID, UserID -> User, matric_no, course_id, year)
+- Announcement (AnnID, title, body, author_id -> User, created_at, is_public)
+- Course (CourseID, code, title, description)
+- Event (EventID, title, description, start_date, end_date, location)
+- Result (ResultID, student_id -> Student, course_id -> Course, grade, term)
+- TimetableSlot (SlotID, course_id -> Course, day, start_time, end_time, venue)
+
+Relationships (summary):
+- User 1..1 Student (when role = student)
+- Course 1..* Result
+- Student 1..* Result
+- Course 1..* TimetableSlot
+
+5.4 Conceptual ER Diagram (PlantUML)
+
+@startuml
+entity User {
+  * user_id : INT
+  --
+  username : VARCHAR
+  password_hash : VARCHAR
+  role : VARCHAR
+  email : VARCHAR
+  first_name : VARCHAR
+  last_name : VARCHAR
+}
+
+entity Student {
+  * student_id : INT
+  --
+  user_id : INT
+  matric_no : VARCHAR
+  course_id : INT
+  year : INT
+}
+
+entity Course {
+  * course_id : INT
+  --
+  code : VARCHAR
+  title : VARCHAR
+  description : TEXT
+}
+
+entity Announcement {
+  * ann_id : INT
+  --
+  title : VARCHAR
+  body : TEXT
+  author_id : INT
+  created_at : DATETIME
+  is_public : BOOLEAN
+}
+
+entity Result {
+  * result_id : INT
+  --
+  student_id : INT
+  course_id : INT
+  grade : VARCHAR
+  term : VARCHAR
+}
+
+entity TimetableSlot {
+  * slot_id : INT
+  --
+  course_id : INT
+  day : VARCHAR
+  start_time : TIME
+  end_time : TIME
+  venue : VARCHAR
+}
+
+User ||--o{ Student : owns
+Course ||--o{ Result : contains
+Student ||--o{ Result : has
+Course ||--o{ TimetableSlot : schedules
+Announcement }o--|| User : authored_by
+@enduml
+
+6. Constraints and Assumptions
+------------------------------
+- The system assumes a single-institution deployment model
+- Maximum concurrent users expected: 1000
+- Peak load periods during registration and result periods
+- Users are expected to have basic web browser knowledge
+- System will operate within regular business hours with minimal downtime
+- Data backup and recovery procedures are handled by IT operations
+- Internet connectivity is required for all users
+- Modern web browsers (Chrome, Firefox, Safari, Edge) are supported
+- Mobile responsiveness is desired but not critical for admin functions
+- Screen resolution minimum of 1024x768 is assumed
+
+7. Proposed Technology Stack
+----------------------------
+Frontend:
+- HTML5, CSS3
+- JavaScript (ES6+)
+- Bootstrap 5 for responsive design
+- jQuery for DOM manipulation
+- AJAX for asynchronous requests
+
+Backend:
+- PHP 8.0+
+- Apache 2.4+ or Nginx
+- MySQL 8.0+ or MariaDB 10.5+
+- PHP PDO for database operations
+- Sessions for authentication
+
+Development Tools:
+- Git for version control
+- VS Code or PHP Storm as IDE
+- XAMPP for local development
+- PHPUnit for testing
+- PHP_CodeSniffer for code standards
+
+Security:
+- HTTPS/SSL for all connections
+- Password hashing using PHP's password_hash()
+- Prepared statements for SQL queries
+- CSRF protection tokens
+- XSS prevention through output escaping
+
+
+8. Acceptance Criteria
+----------------------
+- All functional requirements (FR-1 through FR-4) implemented and tested.
+- Authentication and authorization enforced across protected pages.
+- Basic input validation and error handling present.
+- Application deploys and runs on a standard XAMPP installation.
+
+9. Appendix / Mapping to Codebase
+---------------------------------
+Representative files and folders (existing in repository):
+- `index.php` — public entry page
+- `admin/` — admin pages (dashboard, manage_*, api endpoints)
+- `student/` — student-facing pages
+- `includes/db_connect.php` — database connection
+- `includes/auth.php` — authentication helper
+- `assets/` — css/js/img
+
+10. Next Steps / Notes
+----------------------
+- If you want, I can render the PlantUML diagrams to PNG/SVG and add them to the repo.
+- We can expand this SRS with detailed use-case descriptions, UI wireframes, or sequence diagrams.
+
+
+
+End of SRS
+folder structure
+unimanage/
+├── admin/
+│   ├── api/
+│   │   └── search_students.php
+│   ├── dashboard.php
+│   ├── manage_announcements/
+│   │   ├── create_announcement.php
+│   │   ├── read_announcement.php
+│   │   ├── update_announcement.php
+│   │   └── delete_announcement.php
+│   ├── manage_courses/
+│   │   ├── create_course.php
+│   │   ├── read_course.php
+│   │   ├── update_course.php
+│   │   └── delete_course.php
+│   ├── manage_events/
+│   │   ├── create_event.php
+│   │   ├── read_event.php
+│   │   ├── update_event.php
+│   │   └── delete_event.php
+│   ├── manage_results/
+│   │   ├── create_result.php
+│   │   ├── read_result.php
+│   │   ├── update_result.php
+│   │   └── delete_result.php
+│   ├── manage_timetable/
+│   │   ├── create_timetable.php
+│   │   ├── read_timetable.php
+│   │   ├── update_timetable.php
+│   │   └── delete_timetable.php
+│   └── manage_users/
+│       ├── create_user.php
+│       ├── read_user.php
+│       ├── update_user.php
+│       └── delete_user.php
+│
+├── student/
+│   ├── dashboard.php
+│   ├── announcements.php
+│   ├── events.php
+│   ├── results.php
+│   ├── timetable.php
+│   └── profile.php
+│
+├── includes/
+│   ├── config.php
+│   ├── db_connect.php
+│   ├── auth.php
+│   ├── functions.php
+│   ├── header.php
+│   ├── footer.php
+│   └── validation.php
+│
+├── assets/
+│   ├── css/
+│   │   ├── style.css
+│   │   └── bootstrap.min.css
+│   ├── js/
+│   │   ├── main.js
+│   │   ├── jquery.min.js
+│   │   └── bootstrap.bundle.min.js
+│   └── img/
+│       ├── logo.png
+│       └── favicon.ico
+│
+├── docs/
+│   └── SRS.txt
+│
+└── 

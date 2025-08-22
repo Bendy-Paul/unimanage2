@@ -1,0 +1,133 @@
+UniManage — Use Case Diagram (text)
+
+Brief
+-----
+This file contains a concise use-case diagram for the UniManage project: actors, use cases, relationships, a simple ASCII diagram, and PlantUML source you can paste into a PlantUML renderer to generate a visual diagram.
+
+Actors
+------
+- Admin
+- Student
+- Guest (optional, not authenticated)
+- System (implicit)
+
+Use cases (grouped)
+-------------------
+Authentication
+- Login
+- Logout
+
+Admin management & site admin tasks (Admin)
+- View Dashboard
+- Manage Users (Create / Edit / Delete / View Students)
+- Manage Announcements (Create / Edit / Delete / View)
+- Manage Courses (Create / Edit / Delete / View)
+- Manage Events (Create / Edit / Delete / View)
+- Manage Results (Create / Edit / Delete / View)
+- Manage Timetable Slots (Create / Edit / Delete / View)
+- Search Students (API)
+
+Student actions (Student)
+- View Dashboard
+- View Announcements
+- View Events
+- View Event Details
+- View Results
+- View Timetable
+- View Profile
+- Edit Profile
+
+Guest actions (Guest)
+- View Public Announcements
+- View Public Events
+
+Relationships / Notes
+---------------------
+- "Login" is a prerequisite for Admin and Student protected actions.
+- "Search Students" is an API used by Admin when managing users.
+- Admin has full CRUD permissions for announcements, courses, events, results and timetable.
+- Students have read access to announcements, events, results and timetable; can edit their own profile only.
+
+Simple ASCII use-case diagram
+----------------------------
+
+  [Admin]                [Student]             [Guest]
+    |                       |                    |
+    |--(Login)-------------- | --(Login)--------- |
+    |                       |                    |
+    |--(View Dashboard)     |--(View Dashboard)  |--(View Public Announcements)
+    |--(Manage Users)       |--(View Announcements)
+    |--(Manage Announcements)|--(View Events)
+    |--(Manage Courses)     |--(View Results)
+    |--(Manage Events)      |--(View Timetable)
+    |--(Manage Results)     |--(View Profile)
+    |--(Manage Timetable)   |--(Edit Profile)
+    |--(Search Students API)
+    |--(Logout)             |--(Logout)
+
+PlantUML source (paste into plantuml.com/plantuml or a local renderer)
+--------------------------------------------------------------------
+@startuml
+left to right direction
+actor Admin
+actor Student
+actor Guest
+
+package "UniManage" {
+  (Login)
+  (Logout)
+
+  (View Dashboard)
+
+  (Manage Users)
+  (Manage Announcements)
+  (Manage Courses)
+  (Manage Events)
+  (Manage Results)
+  (Manage Timetable)
+  (Search Students API)
+
+  (View Announcements)
+  (View Events)
+  (View Event Details)
+  (View Results)
+  (View Timetable)
+  (View Profile)
+  (Edit Profile)
+}
+
+Admin --> (Login)
+Student --> (Login)
+Guest --> (View Announcements)
+
+Admin --> (View Dashboard)
+Admin --> (Manage Users)
+Admin --> (Manage Announcements)
+Admin --> (Manage Courses)
+Admin --> (Manage Events)
+Admin --> (Manage Results)
+Admin --> (Manage Timetable)
+Admin --> (Search Students API)
+Admin --> (Logout)
+
+Student --> (View Dashboard)
+Student --> (View Announcements)
+Student --> (View Events)
+Student --> (View Event Details)
+Student --> (View Results)
+Student --> (View Timetable)
+Student --> (View Profile)
+Student --> (Edit Profile)
+Student --> (Logout)
+
+"Search Students API" ..> (Manage Users) : <<include>>
+(Login) <|-- (Manage Users)
+@enduml
+
+
+Quality / usage notes
+---------------------
+- The PlantUML section can be rendered with any PlantUML tool to get an image.
+- Update or extend use cases if you add new admin pages or student features.
+
+Created: usecase_diagram.txt

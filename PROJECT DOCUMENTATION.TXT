@@ -1,0 +1,185 @@
+Project: UniManage — Project Documentation
+Date: 2025-08-22
+
+1. Project overview
+-------------------
+UniManage is a lightweight university administration and student management web application. It provides an admin interface to manage departments, courses, events, timetables, announcements, results, and users, and a student-facing area for announcements, events, results, timetables and profile management. The project is implemented as a PHP web application intended to run on a LAMP/WAMP stack and was developed to simplify basic administrative tasks for small-to-medium educational institutions.
+
+Primary goals:
+- Centralize student, course, department, event and timetable data.
+- Provide simple CRUD interfaces for administrators.
+- Offer students a concise dashboard to view personal data and institutional announcements.
+
+Scope and audience:
+- Audience: University administrators, registrars, faculty staff, and enrolled students.
+- Scope: Core academic management workflows; not intended as a full-featured SIS replacement (no payroll, admissions, or complex SIS integrations).
+
+2. Design process and architecture
+----------------------------------
+Design approach:
+- Iterative, requirements-driven design. Initial functional requirements were documented in the SRS, then prioritized into admin and student features.
+- UI wireframes were kept minimal to focus on functionality and ease of deployment.
+
+High-level architecture:
+- Presentation layer: PHP server-rendered pages (files under root, admin/, student/, includes/), CSS in `assets/css` and JavaScript in `assets/js`.
+- Application logic: PHP scripts, separated by feature (manage_departments, manage_courses, manage_events, manage_results, manage_timetables, manage_users, manage_announcements).
+- Data layer: MySQL database (schema file: `db_schema.sql`). Database access is through the `includes/db_connect.php` module.
+- Authentication & Authorization: Lightweight session-based auth implemented in `includes/auth.php` and entry checks across protected pages.
+
+Key components:
+- `includes/` — common includes (header, footer, navbar, sidebar, db_connect, auth).
+- `admin/` — administrative dashboards and feature folders.
+- `student/` — student-facing pages.
+- `assets/` — static assets (CSS, JS, images).
+
+Data model (summary):
+- Students, Users: user records with roles (admin, student).
+- Departments -> Courses (one-to-many).
+- Events, Announcements, Results, TimetableSlots: feature-specific tables referencing students/courses/departments.
+
+Security considerations (design-time):
+- Server-side validation of inputs for all CRUD operations.
+- Use of prepared statements (or parameterized queries) for database access recommended (if not already present, migrate raw queries to prepared statements).
+- Session handling and access checks on every admin route.
+
+3. Roles and responsibilities of team members
+-------------------------------------------
+This section outlines suggested responsibilities (adapt to actual team):
+- Project Manager / Product Owner
+  - Prioritize features, coordinate stakeholders, maintain SRS and acceptance criteria.
+- Lead Developer / Backend Engineer
+  - PHP architecture, DB schema design (`db_schema.sql`), implement server-side logic and APIs in `admin/api/`.
+- Frontend Engineer / UI
+  - Stylesheets in `assets/css`, client-side scripts in `assets/js`, improve accessibility and responsive layout.
+- QA Engineer / Tester
+  - Create and execute test plans, regression suites for CRUD flows, verify authentication and role-based access.
+- DevOps / Release Engineer
+  - Configure hosting, deployment, backups, and environment configuration for staging/production.
+- Documentation / Trainer
+  - Maintain user guides, README, and onboarding docs for admins and students.
+
+4. Development methodology
+--------------------------
+Recommended methodology: Agile (Scrum-inspired) for small teams.
+- Iterations (sprints) of 1–2 weeks.
+- Backlog maintained from the SRS and prioritized by the Product Owner.
+- Deliverables per sprint: small, testable increments (e.g., department management + tests).
+- Ceremonies: daily standup (quick), sprint planning, review and retrospective.
+
+Why Agile?
+- Encourages incremental delivery and early feedback from users.
+- Fits well if the project will evolve with institutional requirements.
+
+5. Tools and technologies used
+------------------------------
+Primary stack:
+- Language: PHP (server-side), JavaScript (client-side).
+- Web server: Apache (XAMPP/WAMP stack assumed for local development).
+- Database: MySQL / MariaDB (schema in `db_schema.sql`).
+- Frontend: HTML/CSS, vanilla JavaScript. CSS files located in `assets/css` and JS in `assets/js`.
+
+Dev tooling and recommended additions:
+- Git for version control (repository root present).
+- Local dev: XAMPP or WAMP on Windows, or LAMP on Linux.
+- Optional: Composer for PHP package management, PHPUnit for automated tests.
+- Optional: Docker for consistent environment; a simple docker-compose can encapsulate Apache/PHP and MySQL.
+
+6. Testing approach and results
+------------------------------
+Testing strategy:
+- Unit tests: For any refactored logic (recommend adding PHPUnit tests targeting utility modules and DB access wrappers).
+- Integration tests: Test end-to-end flows (admin CRUD for courses/departments/users; student dashboard interactions). These can be automated with tools like Selenium, Cypress, or simple PHPUnit + DB fixtures.
+- Manual QA: Verify role-based access, form validations, and error handling.
+
+Current test artifacts and findings (as implemented):
+- The repo contains minimal or no automated tests. Manual verification was used during development.
+- Common test checks performed manually:
+  - Admin can create/edit/delete departments, courses, events, announcements, timetables, results.
+  - Student dashboard displays announcements, events and personal results correctly when logged in.
+  - Authentication blocks access to admin pages when unauthenticated.
+
+Suggested test cases (minimum):
+1. Authentication
+   - Login with valid admin credentials -> access `admin/dashboard.php`.
+   - Attempt admin page when logged out -> redirect to login.
+2. Department CRUD
+   - Create department with valid data -> appears in list.
+   - Delete department with linked courses -> check cascade or prevent deletion.
+3. Course CRUD
+   - Create course and assign to department -> listed under department.
+4. Results visibility
+   - Create result entry for student -> visible in student `results.php`.
+
+Test results summary: Manual tests passed for core CRUD flows during development; no failing critical issues recorded. Adding automated tests and CI is recommended.
+
+7. Hosting and deployment process
+--------------------------------
+Recommended deployment environments:
+- Staging: Mirror production with separate DB and credentials for QA.
+- Production: LAMP/WAMP-like host with HTTPS, daily backups and monitored logs.
+
+Minimal deployment checklist:
+1. Environment preparation
+   - PHP 7.4+ or 8.x, Apache with mod_php or PHP-FPM, MySQL/MariaDB.
+2. Secure configuration
+   - Use HTTPS with a valid TLS certificate.
+   - Secure `includes/db_connect.php` (do not commit real credentials).
+   - Configure PHP settings: display_errors=Off, error_log directed to a secure file.
+3. Database
+   - Run `db_schema.sql` to create required tables and initial seed data.
+4. File permissions
+   - Ensure upload directories (if any) are writable by web server, but not world-writable.
+5. Backups
+   - Configure regular DB dumps and file backups.
+6. Deployment steps (simple manual flow)
+   - Pull latest code from Git on the server or deploy via CI.
+   - Run DB migrations or import SQL schema changes.
+   - Clear server caches/restart PHP-FPM or Apache as needed.
+
+CI/CD recommendation:
+- Implement a simple pipeline that runs tests, lints, and deploys to staging on merge, and promotes to production after sign-off. Use GitHub Actions, GitLab CI, or a hosted CI provider.
+
+8. Challenges and lessons learned
+--------------------------------
+Challenges encountered:
+- Input validation and protecting SQL queries: legacy code sometimes uses inline SQL; this is a source of injection risk if not parameterized.
+- Limited automated testing: manual testing increases regression risk during feature changes.
+- Role and permission granularity: current model supports basic admin/student roles; more granular roles (faculty, registrar) may be needed later.
+
+Lessons learned and recommendations:
+- Migrate DB access to a small data access layer with prepared statements or an ORM to reduce SQL injection risk.
+- Introduce automated tests early (unit + integration) and run them in CI to catch regressions.
+- Add feature toggles and a staging environment to validate schema changes before production.
+- Improve documentation for deployment and developer onboarding (README with setup steps, environment variables, and seeding instructions).
+
+Appendices
+---------
+A. Quick setup (development) - local
+1. Install XAMPP on Windows.
+2. Place repo in `htdocs` (already present at this path).
+3. Create a MySQL database and import `db_schema.sql`.
+4. Configure `includes/db_connect.php` with local DB credentials.
+5. Visit `http://localhost/unimanage/` and use the app.
+
+B. Recommended next improvements (prioritized)
+1. Replace raw DB calls with prepared statements or a small DB wrapper.
+2. Add PHPUnit tests for DB wrapper and critical flows.
+3. Add a README.md with quick start and environment variables.
+4. Add a simple CI pipeline for linting and running tests.
+
+Requirements coverage
+---------------------
+- Project overview: Done
+- Design process and architecture: Done
+- Roles and responsibilities: Done
+- Development methodology: Done (Agile recommended)
+- Tools and technologies used: Done
+- Testing approach and results: Done (manual test summary + recommendations)
+- Hosting and deployment process: Done
+- Challenges and lessons learned: Done
+
+Contact and maintenance
+-----------------------
+For ongoing maintenance, assign a small team: one backend maintainer, one frontend maintainer, one DevOps engineer and one QA. Keep issue tracking in Git and tag releases in Git.
+
+End of document

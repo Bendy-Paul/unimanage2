@@ -1,0 +1,177 @@
+UNIMANAGE - SITE OVERVIEW
+========================
+
+1. PROJECT STRUCTURE
+-------------------
+unimanage/
+├── admin/
+│   ├── api/
+│   │   └── search_students.php
+│   ├── dashboard.php
+│   ├── manage_announcements/
+│   │   ├── create_announcement.php
+│   │   ├── read_announcement.php
+│   │   ├── update_announcement.php
+│   │   └── delete_announcement.php
+│   ├── manage_courses/
+│   │   ├── create_course.php
+│   │   ├── read_course.php
+│   │   ├── update_course.php
+│   │   └── delete_course.php
+│   ├── manage_events/
+│   │   ├── create_event.php
+│   │   ├── read_event.php
+│   │   ├── update_event.php
+│   │   └── delete_event.php
+│   ├── manage_results/
+│   │   ├── create_result.php
+│   │   ├── read_result.php
+│   │   ├── update_result.php
+│   │   └── delete_result.php
+│   ├── manage_timetable/
+│   │   ├── create_timetable.php
+│   │   ├── read_timetable.php
+│   │   ├── update_timetable.php
+│   │   └── delete_timetable.php
+│   └── manage_users/
+│       ├── create_user.php
+│       ├── read_user.php
+│       ├── update_user.php
+│       └── delete_user.php
+│
+├── student/
+│   ├── dashboard.php
+│   ├── announcements.php
+│   ├── events.php
+│   ├── results.php
+│   ├── timetable.php
+│   └── profile.php
+│
+├── includes/
+│   ├── config.php
+│   ├── db_connect.php
+│   ├── auth.php
+│   ├── functions.php
+│   ├── header.php
+│   ├── footer.php
+│   └── validation.php
+│
+├── assets/
+│   ├── css/
+│   │   ├── style.css
+│   │   └── bootstrap.min.css
+│   ├── js/
+│   │   ├── main.js
+│   │   ├── jquery.min.js
+│   │   └── bootstrap.bundle.min.js
+│   └── img/
+│       ├── logo.png
+│       └── favicon.ico
+│
+├── docs/
+│   └── SRS.txt
+│
+└──
+
+2. MAIN FEATURES
+---------------
+A. User Authentication System
+   - Login/Logout functionality
+   - Role-based access control
+   - Password reset system
+   - User profile management
+
+B. Student Management
+   - Student registration
+   - Profile management
+   - Enrollment tracking
+   - Academic history
+   - Attendance records
+
+C. Course Management
+   - Course creation/editing
+   - Course scheduling
+   - Prerequisites management
+   - Course materials upload
+   - Syllabus management
+
+D. Faculty Management
+   - Faculty profiles
+   - Teaching assignments
+   - Office hours
+   - Department allocation
+
+E. Grade Tracking
+   - Grade entry system
+   - GPA calculation
+   - Progress reports
+   - Academic alerts
+
+F. Schedule Management
+   - Class scheduling
+   - Room allocation
+   - Conflict detection
+   - Calendar integration
+
+3. TECHNICAL STACK
+-----------------
+Frontend:
+- HTML5 for structure
+- CSS3 for styling
+- JavaScript (ES6+)
+- Bootstrap 5.0
+- jQuery 3.6.0
+
+Backend:
+- PHP 8.0+
+- MySQL 8.0
+- Apache 2.4
+
+Development Tools:
+- XAMPP v3.3.0
+- Git version control
+- VS Code editor
+
+4. KEY FILES
+-----------
+Core Files:
+- index.php:        Main entry point and routing
+- config.php:       Environment and app settings
+- db_connect.php:   Database connection handler
+- functions.php:    Utility functions
+- auth.php:         Authentication logic
+- api.php:         RESTful API endpoints
+
+Configuration Files:
+- .htaccess:       Apache configuration
+- composer.json:   Dependencies
+- config.ini:      Server settings
+
+5. SECURITY MEASURES
+------------------
+Authentication:
+- Bcrypt password hashing
+- JWT token authentication
+- Rate limiting
+- 2FA support
+
+Data Protection:
+- Input sanitization
+- Prepared statements
+- XSS prevention
+- CSRF tokens
+
+Session Security:
+- Secure session handling
+- Session timeout
+- IP binding
+- SSL/TLS encryption
+
+6. MAINTENANCE
+-------------
+- Daily database backups
+- Error logging
+- Performance monitoring
+- Regular security updates
+
+Last Updated: [Current Date]

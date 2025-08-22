@@ -152,10 +152,10 @@ if ($user && isset($user['id'])) {
                                 if (!empty($r['academic_year']) && !in_array($r['academic_year'], $academic_years)) {
                                     $academic_years[] = $r['academic_year'];
                                     // Display academic year in format YYYY/YYYY+1
-                                    echo '<option value="' . htmlspecialchars($r['academic_year']) . '">' . 
-                                         htmlspecialchars($r['academic_year']) . '/' . 
-                                         htmlspecialchars($r['academic_year'] + 1) . 
-                                         '</option>';
+                                    echo '<option value="' . htmlspecialchars($r['academic_year']) . '">' .
+                                        htmlspecialchars($r['academic_year']) . '/' .
+                                        htmlspecialchars($r['academic_year'] + 1) .
+                                        '</option>';
                                 }
                             }
                             ?>
@@ -253,11 +253,7 @@ if ($user && isset($user['id'])) {
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <?php if (!empty($r['status']) && strtolower($r['status']) === 'published'): ?>
-                                                        <span class="badge bg-success">Published</span>
-                                                    <?php else: ?>
-                                                        <span class="badge bg-secondary">Pending</span>
-                                                    <?php endif; ?>
+                                                    <span class="badge bg-success">Published</span>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

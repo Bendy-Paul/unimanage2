@@ -86,22 +86,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Department</label>
-                        <select name="department_id" class="form-select">
+                        <input type="hidden" name="department_id" value="sOFTWARE ENGINEERING">
+                        <!-- <label class="form-label">Department</label> -->
+                        <!-- <select name="department_id" class="form-select">
                             <option value="">-- Any --</option>
                             <?php foreach ($departments as $d): ?>
                                 <option value="<?= $d['dept_id'] ?>" <?= (isset($department_id) && $department_id == $d['dept_id']) ? 'selected' : '' ?>><?= htmlspecialchars($d['name']) ?></option>
                             <?php endforeach; ?>
-                        </select>
+                        </select> -->
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Lecturer</label>
+                        <input type="hidden" name="lecturer_id" value="1">
+                        <!-- <label class="form-label">Lecturer</label>
                         <select name="lecturer_id" class="form-select">
                             <option value="">-- None --</option>
                             <?php foreach ($lecturers as $l): ?>
                                 <option value="<?= $l['user_id'] ?>" <?= (isset($lecturer_id) && $lecturer_id == $l['user_id']) ? 'selected' : '' ?>><?= htmlspecialchars($l['name']) ?></option>
                             <?php endforeach; ?>
-                        </select>
+                        </select> -->
                     </div>
                     <button class="btn btn-primary">Create Course</button>
                     <a href="index.php" class="btn btn-secondary">Cancel</a>

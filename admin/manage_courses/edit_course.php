@@ -53,10 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h3>Edit Course</h3>
 
         <div class="card col-8 m-auto mt-4">
-            <?php if ($success): ?>
-                <div class="alert alert-success">Course updated successfully.</div>
-            <?php endif; ?>
             <div class="card-body">
+                <?php if ($success): ?>
+                    <div class="alert alert-success">Course updated successfully.</div>
+                <?php endif; ?>
                 <form method="POST">
                     <div class="mb-3">
                         <label class="form-label">Course Code *</label>
@@ -99,21 +99,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Department</label>
-                        <select name="department_id" class="form-select">
+                        <input type="hidden" name="department_id" value="<?= $d['dept_id'] ?>">
+                        <!-- <select name="department_id" class="form-select">
                             <option value="">-- Any --</option>
                             <?php foreach ($departments as $d): ?>
                                 <option value="<?= $d['dept_id'] ?>" <?= ((isset($_POST['department_id']) && $_POST['department_id'] == $d['dept_id']) || (!isset($_POST['department_id']) && $course['department_id'] == $d['dept_id'])) ? 'selected' : '' ?>><?= htmlspecialchars($d['name']) ?></option>
                             <?php endforeach; ?>
-                        </select>
+                        </select> -->
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Lecturer</label>
+                        <input type="hidden" name="lecturer_id" value="<?= $l['user_id'] ?>">
+                        <!-- <label class="form-label">Lecturer</label>
                         <select name="lecturer_id" class="form-select">
                             <option value="">-- None --</option>
                             <?php foreach ($lecturers as $l): ?>
                                 <option value="<?= $l['user_id'] ?>" <?= ((isset($_POST['lecturer_id']) && $_POST['lecturer_id'] == $l['user_id']) || (!isset($_POST['lecturer_id']) && $course['lecturer_id'] == $l['user_id'])) ? 'selected' : '' ?>><?= htmlspecialchars($l['name']) ?></option>
                             <?php endforeach; ?>
-                        </select>
+                        </select> -->
                     </div>
                     <button class="btn btn-primary">Save Changes</button>
                     <a href="index.php" class="btn btn-secondary">Cancel</a>

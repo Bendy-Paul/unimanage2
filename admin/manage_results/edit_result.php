@@ -130,28 +130,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <input type="number" id="course_credits" name="credits" readonly class="form-control" value="<?= htmlspecialchars($_POST['credits'] ?? $result['credits']) ?>">
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Academic Year</label>
-                            <input type="number" name="academic_year" class="form-control" value="<?= htmlspecialchars($_POST['academic_year'] ?? $result['academic_year']) ?>">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Semester</label>
-                            <input type="text" name="semester" class="form-control" value="<?= htmlspecialchars($_POST['semester'] ?? $result['semester']) ?>">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Credits</label>
-                            <input type="number" name="credits" class="form-control" value="<?= htmlspecialchars($_POST['credits'] ?? $result['credits']) ?>">
-                        </div>
-                    </div>
+            
                     <div class="mb-3">
                         <label class="form-label">Marks *</label>
                         <input type="number" step="0.01" name="marks" class="form-control <?= isset($errors['marks']) ? 'is-invalid' : '' ?>" value="<?= htmlspecialchars($_POST['marks'] ?? $result['marks']) ?>" required>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Grade</label>
-                        <input type="text" name="grade" class="form-control" value="<?= htmlspecialchars($_POST['grade'] ?? $result['grade']) ?>">
-                    </div>
+<div class="mb-3">
+    <label class="form-label">Grade</label>
+    <select name="grade" class="form-control">
+        <!-- <option value="">Select Grade</option> -->
+        <option value="A" <?= (($_POST['grade'] ?? $result['grade'] ?? '') == 'A') ? 'selected' : '' ?>>A</option>
+        <option value="B" <?= (($_POST['grade'] ?? $result['grade'] ?? '') == 'B') ? 'selected' : '' ?>>B</option>
+        <option value="C" <?= (($_POST['grade'] ?? $result['grade'] ?? '') == 'C') ? 'selected' : '' ?>>C</option>
+        <option value="D" <?= (($_POST['grade'] ?? $result['grade'] ?? '') == 'D') ? 'selected' : '' ?>>D</option>
+        <option value="E" <?= (($_POST['grade'] ?? $result['grade'] ?? '') == 'E') ? 'selected' : '' ?>>E</option>
+        <option value="F" <?= (($_POST['grade'] ?? $result['grade'] ?? '') == 'F') ? 'selected' : '' ?>>F</option>
+    </select>
+</div>
                     <div class="mb-3">
                         <label class="form-label">Status</label>
                         <select name="status" class="form-select">
@@ -160,13 +155,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Department</label>
+                        <input type="hidden" name="department_id" value="<?= $d['dept_id'] ?>">
+                        <!-- <label class="form-label">Department</label>
                         <select name="department_id" class="form-select">
                             <option value="">-- Any --</option>
                             <?php foreach ($departments as $d): ?>
                                 <option value="<?= $d['dept_id'] ?>" <?= ((isset($_POST['department_id']) && $_POST['department_id'] == $d['dept_id']) || (!isset($_POST['department_id']) && $result['department_id'] == $d['dept_id'])) ? 'selected' : '' ?>><?= htmlspecialchars($d['name']) ?></option>
                             <?php endforeach; ?>
-                        </select>
+                        </select> -->
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Remarks</label>

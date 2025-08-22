@@ -266,6 +266,12 @@ unset($list);
             console.log('Selected semester:', this.value);
             // You would typically make an AJAX call here to load the appropriate timetable
         });
+
+        <?php
+        if (isset($_GET['print']) && $_GET['print'] == 'true') {
+            echo 'window.onload = function() { window.print(); }';
+        }
+        ?>
     </script>
 </body>
 </html>

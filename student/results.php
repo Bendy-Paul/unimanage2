@@ -26,10 +26,10 @@ $gradePoints = [
 if ($user && isset($user['id'])) {
     $studentId = $user['id'];
     echo $user['id'] . "\n";
-    
+
     // Get all results for the student with course details
-$stmt = db_query(
-    'SELECT 
+    $stmt = db_query(
+        'SELECT 
         r.course_code AS original_course_code,
         r.*,
         c.course_name,
@@ -38,20 +38,20 @@ $stmt = db_query(
     LEFT JOIN courses c ON r.course_code = c.course_code 
     WHERE r.student_id = ? 
     ORDER BY r.academic_year DESC, r.semester DESC',
-    [$studentId]
-);
-    
+        [$studentId]
+    );
+
     $results = $stmt->fetchAll();
 
     // Calculate summary information
     $totalCredits = 0;
     $gpSum = 0;
     $gpCount = 0;
-    
+
     foreach ($results as $r) {
         $credits = (int)($r['credits'] ?? 0);
         $totalCredits += $credits;
-        
+
         // Calculate CGPA on a 5.0 scale.
         // Priority: use explicit grade_point (if your results table has it),
         // then letter grade mapping, then numeric marks -> grade-point mapping.
@@ -77,17 +77,25 @@ $stmt = db_query(
             $gpCount += $credits;
         }
     }
-    
+
     $summary['credits'] = $totalCredits;
     $summary['gpa'] = $gpCount ? round($gpSum / $gpCount, 2) : null;
-    
+
     if (!empty($results)) {
-        $summary['current_semester'] = $results[0]['semester'] ?? null;
+        $stmt = db_query("SELECT * FROM academic_year WHERE id = 1")->fetchAll();
+        $getsemester = $stmt[0]['semester'];
+        if ($getsemester == 1) {
+            $summary['current_semester'] = "Hammatarn";
+        } else {
+            $summary['current_semester'] = "Rain";
+        }
+        // echo $academicYear;
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -96,12 +104,24 @@ $stmt = db_query(
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/student.css">
     <style>
-        .gpa-excellent { color: #28a745; }
-        .gpa-good { color: #17a2b8; }
-        .gpa-fair { color: #ffc107; }
-        .gpa-poor { color: #dc3545; }
+        .gpa-excellent {
+            color: #28a745;
+        }
+
+        .gpa-good {
+            color: #17a2b8;
+        }
+
+        .gpa-fair {
+            color: #ffc107;
+        }
+
+        .gpa-poor {
+            color: #dc3545;
+        }
     </style>
 </head>
+
 <body>
     <div class="container-fluid py-4">
         <div class="row">
@@ -117,7 +137,25 @@ $stmt = db_query(
                             foreach ($results as $r) {
                                 if (!empty($r['semester']) && !in_array($r['semester'], $semesters)) {
                                     $semesters[] = $r['semester'];
-                                    echo '<option value="'.htmlspecialchars($r['semester']).'">'.htmlspecialchars($r['semester']).'</option>';
+                                    echo '<option value="' . htmlspecialchars($r['semester']) . '">' . htmlspecialchars($r['semester']) . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
+
+                        <select id="year-filter" class="form-select form-select-sm w-auto mt-4">
+                            <option value="all">All Years</option>
+                            <?php
+                            // Generate academic year filter options from available results
+                            $academic_years = [];
+                            foreach ($results as $r) {
+                                if (!empty($r['academic_year']) && !in_array($r['academic_year'], $academic_years)) {
+                                    $academic_years[] = $r['academic_year'];
+                                    // Display academic year in format YYYY/YYYY+1
+                                    echo '<option value="' . htmlspecialchars($r['academic_year']) . '">' . 
+                                         htmlspecialchars($r['academic_year']) . '/' . 
+                                         htmlspecialchars($r['academic_year'] + 1) . 
+                                         '</option>';
                                 }
                             }
                             ?>
@@ -133,12 +171,12 @@ $stmt = db_query(
                                 <div class="me-3 text-primary"><i class="bi bi-award fs-2"></i></div>
                                 <div>
                                     <div class="small text-muted">Current GPA</div>
-                                    <div class="h5 mb-0 <?php 
-                                        if ($summary['gpa'] >= 3.5) echo 'gpa-excellent';
-                                        elseif ($summary['gpa'] >= 2.5) echo 'gpa-good';
-                                        elseif ($summary['gpa'] >= 1.5) echo 'gpa-fair';
-                                        else echo 'gpa-poor';
-                                    ?>">
+                                    <div class="h5 mb-0 <?php
+                                                        if ($summary['gpa'] >= 3.5) echo 'gpa-excellent';
+                                                        elseif ($summary['gpa'] >= 2.5) echo 'gpa-good';
+                                                        elseif ($summary['gpa'] >= 1.5) echo 'gpa-fair';
+                                                        else echo 'gpa-poor';
+                                                        ?>">
                                         <?php echo $summary['gpa'] !== null ? number_format($summary['gpa'], 2) : '&mdash;'; ?>
                                     </div>
                                 </div>
@@ -192,23 +230,24 @@ $stmt = db_query(
                                 </thead>
                                 <tbody>
                                     <?php if (empty($results)): ?>
-                                        <tr><td colspan="8" class="text-center text-muted py-4">No results published yet.</td></tr>
+                                        <tr>
+                                            <td colspan="8" class="text-center text-muted py-4">No results published yet.</td>
+                                        </tr>
                                     <?php else: ?>
                                         <?php foreach ($results as $r): ?>
-                                            <tr data-year="<?php echo htmlspecialchars($r['academic_year'] ?? ''); ?>" 
+                                            <tr data-year="<?php echo htmlspecialchars($r['academic_year'] ?? ''); ?>"
                                                 data-semester="<?php echo htmlspecialchars($r['semester'] ?? ''); ?>">
                                                 <td><?php echo htmlspecialchars($r['course_code'] ?? ''); ?></td>
                                                 <td><?php echo htmlspecialchars($r['course_name']); ?></td>
-                                                <td><?php echo htmlspecialchars($r['academic_year'] ?? ''); ?>/<?php echo htmlspecialchars($r['academic_year'] + 1 ?? '') ; ?></td>
+                                                <td><?php echo htmlspecialchars($r['academic_year'] ?? ''); ?>/<?php echo htmlspecialchars($r['academic_year'] + 1 ?? ''); ?></td>
                                                 <td><?php echo htmlspecialchars($r['semester'] ?? ''); ?></td>
                                                 <td><?php echo htmlspecialchars($r['credits'] ?? ''); ?></td>
                                                 <td><?php echo is_numeric($r['marks']) ? number_format($r['marks'], 1) : htmlspecialchars($r['marks'] ?? ''); ?></td>
                                                 <td>
                                                     <?php if (!empty($r['grade'])): ?>
-                                                        <span class="badge <?php 
-                                                            echo $r['grade'] === 'A' ? 'bg-success' : 
-                                                                 ($r['grade'] === 'F' ? 'bg-danger' : 'bg-primary'); 
-                                                        ?>">
+                                                        <span class="badge <?php
+                                                                            echo $r['grade'] === 'A' ? 'bg-success' : ($r['grade'] === 'F' ? 'bg-danger' : 'bg-primary');
+                                                                            ?>">
                                                             <?php echo htmlspecialchars($r['grade']); ?>
                                                         </span>
                                                     <?php endif; ?>
@@ -235,26 +274,37 @@ $stmt = db_query(
     <footer class="footer"></footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    // Semester filter functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const semesterFilter = document.getElementById('semester-filter');
-        const resultRows = document.querySelectorAll('tbody tr[data-semester]');
-        
-        semesterFilter.addEventListener('change', function() {
-            const selectedSemester = this.value;
-            
-            resultRows.forEach(row => {
-                if (selectedSemester === 'all' || row.getAttribute('data-semester') === selectedSemester) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+        // Semester filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const semesterFilter = document.getElementById('semester-filter');
+            const resultRows = document.querySelectorAll('tbody tr[data-semester]');
+
+            // Add year filter select element
+            yearFilter = document.getElementById('year-filter');
+
+
+
+
+            // Combined filter function
+            function filterResults() {
+                const selectedSemester = semesterFilter.value;
+                const selectedYear = yearFilter.value;
+
+                resultRows.forEach(row => {
+                    const showBySemester = selectedSemester === 'all' || row.getAttribute('data-semester') === selectedSemester;
+                    const showByYear = selectedYear === 'all' || row.getAttribute('data-year') === selectedYear;
+                    row.style.display = (showBySemester && showByYear) ? '' : 'none';
+                });
+            }
+
+            // Add event listeners for both filters
+            semesterFilter.addEventListener('change', filterResults);
+            yearFilter.addEventListener('change', filterResults);
+
+            // Initialize to show all results
+            filterResults();
         });
-        
-        // Initialize to show all results
-        semesterFilter.dispatchEvent(new Event('change'));
-    });
     </script>
 </body>
+
 </html>

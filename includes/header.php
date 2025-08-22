@@ -11,7 +11,7 @@ if(!$user || $user['role'] !== 'student') {
 
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/unimanage/index.php">
+            <a class="navbar-brand" href="../index.php">
                 <i class="bi bi-mortarboard me-2"></i>UniPortal
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -32,8 +32,7 @@ if(!$user || $user['role'] !== 'student') {
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="academicDropdown">
                             <li><span class="dropdown-header">Results & Progress</span></li>
-                            <li><a class="dropdown-item" href="/unimanage/student/results.php"><i class="bi bi-graph-up me-2"></i> View Results</a></li>
-                            <!-- <li><a class="dropdown-item" href="#"><i class="bi bi-clipboard-data me-2"></i> Academic Progress</a></li> -->
+                            <li><a class="dropdown-item" href="../student/results.php"><i class="bi bi-graph-up me-2"></i> View Results</a></li>
                         </ul>
                     </li>
                     
@@ -44,8 +43,8 @@ if(!$user || $user['role'] !== 'student') {
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="scheduleDropdown">
                             <li><span class="dropdown-header">Timetable</span></li>
-                            <li><a class="dropdown-item" href="/unimanage/student/timetable.php"><i class="bi bi-calendar-week me-2"></i>Weekly View</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-download me-2"></i> Download PDF</a></li>
+                            <li><a class="dropdown-item" href="../student/timetable.php"><i class="bi bi-calendar-week me-2"></i>Weekly View</a></li>
+                            <li><a class="dropdown-item" href="../student/timetable.php?print=true"><i class="bi bi-download me-2"></i> Download PDF</a></li>
                         </ul>
                     </li>
                     
@@ -56,15 +55,15 @@ if(!$user || $user['role'] !== 'student') {
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="campusDropdown">
                             <li><span class="dropdown-header">Events</span></li>
-                            <li><a class="dropdown-item" href="/unimanage/student/events.php"><i class="bi bi-calendar-event me-2"></i> Upcoming Events</a></li>
+                            <li><a class="dropdown-item" href="../student/events.php"><i class="bi bi-calendar-event me-2"></i> Upcoming Events</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><span class="dropdown-header">Information</span></li>
-                            <li><a class="dropdown-item" href="/unimanage/student/annoncement.php"><i class="bi bi-megaphone me-2"></i> Announcements</a></li>
+                            <li><a class="dropdown-item" href="../student/annoncement.php"><i class="bi bi-megaphone me-2"></i> Announcements</a></li>
                         </ul>
                     </li>
                     
                     <li class="nav-item">
-                        <a class="nav-link" href="/unimanage/student/profile.php">
+                        <a class="nav-link" href="../student/profile.php">
                             <i class="bi bi-person"></i> Profile
                         </a>
                     </li>
@@ -75,9 +74,9 @@ if(!$user || $user['role'] !== 'student') {
                             <span class="d-none d-lg-inline"><?php echo htmlspecialchars($user['name'] ?? 'Guest'); ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/unimanage/student/profile.php"><i class="bi bi-person me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="../student/profile.php"><i class="bi bi-person me-2"></i> Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/unimanage/includes/logout.php"><i class="bi bi-box-arrow-right me-2"></i> Sign out</a></li>
+                            <li><a class="dropdown-item" href="../includes/logout.php"><i class="bi bi-box-arrow-right me-2"></i> Sign out</a></li>
                         </ul>
                     </div>
                 </div>

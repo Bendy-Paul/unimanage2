@@ -55,7 +55,7 @@ $announcements = $stmt->fetchAll();
                         <div class="list-group list-group-flush">
                             <?php if (!empty($announcements)): ?>
                                 <?php foreach ($announcements as $ann): ?>
-                                    <a href="event_details.php?annc_id=<?php echo (int)$ann['annc_id']; ?>" class="list-group-item list-group-item-action announcement-card py-3 px-4">
+                                    <a class="list-group-item list-group-item-action announcement-card py-3 px-4">
                                         <div class="d-flex w-100 justify-content-between">
                                             <h6 class="mb-1 fw-bold"><?php echo htmlspecialchars($ann['title']); ?></h6>
                                             <small class="text-muted"><?php echo htmlspecialchars($ann['publish_date']); ?></small>

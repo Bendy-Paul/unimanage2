@@ -148,6 +148,13 @@ if(!$user || $user['role'] !== 'admin') {
                     </a>
                 </div>
             </li>
+            
+            <!-- Academic Year (admin-only edit) -->
+            <li class="nav-item">
+                <a class="nav-link" href="<?php echo file_exists('./edit_academic_year.php') ? './edit_academic_year.php' : '../edit_academic_year.php'; ?>">
+                    <i class="bi bi-calendar3"></i> Edit Academic Year
+                </a>
+            </li>
         </ul>
     </div>
 </div> 

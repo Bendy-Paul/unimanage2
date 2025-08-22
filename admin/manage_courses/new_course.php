@@ -8,6 +8,11 @@ $success = false;
 $departments = db_query("SELECT * FROM departments ORDER BY name")->fetchAll();
 $lecturers = db_query("SELECT user_id, name FROM users WHERE role = 'faculty' ORDER BY name")->fetchAll();
 
+
+    // validate against current academic year
+    $ayRow = db_query("SELECT academic_year FROM academic_year WHERE id = 1 LIMIT 1")->fetch();
+    $currentAcademicYear = $ayRow['academic_year'] ?? (int)date('Y');
+    
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $course_code = trim($_POST['course_code'] ?? '');
     $course_name = trim($_POST['course_name'] ?? '');
@@ -15,6 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $target_year = $_POST['target_year'] ?? null;
     $credit_hours = $_POST['credit_hours'] ?? null;
     $academic_year = $_POST['academic_year'] ?? null;
+    if ($academic_year !== null && $academic_year !== '') {
+        $selectedAy = intval($academic_year);
+        if ($selectedAy > $currentAcademicYear) {
+            $errors['academic_year'] = 'Academic year cannot be greater than current academic year.';
+        }
+    }
     $semester = trim($_POST['semester'] ?? '');
     $department_id = $_POST['department_id'] ?? null;
     $lecturer_id = $_POST['lecturer_id'] ?? null;
@@ -62,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Target Year</label>
                             <select name="target_year" class="form-select">
-                                <option value="">-- Select Year --</option>
+                                <option value="1">-- Select Year --</option>
                                 <?php for ($y = 1; $y <= 5; $y++): ?>
                                     <option value="<?= $y ?>" <?= (isset($target_year) && $target_year == $y) ? 'selected' : '' ?>>Year <?= $y ?></option>
                                 <?php endfor; ?>
@@ -74,7 +85,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Academic Year</label>
-                            <input type="number" name="academic_year" class="form-control" value="<?= htmlspecialchars($academic_year ?? '') ?>">
+                            <select name="academic_year" class="form-select <?= isset($errors['academic_year']) ? 'is-invalid' : '' ?>">
+                                <option value="<?php echo $currentAcademicYear?>">-- Select Year --</option>
+                                <?php
+                                $start = (int)($currentAcademicYear);
+                                for ($i = 0; $i <= 10; $i++) {
+                                    $y = $start - $i;
+                                    $label = $y . '/' . ($y + 1);
+                                    $sel = (isset($academic_year) && $academic_year == $y) ? ' selected' : '';
+                                    echo '<option value="' . $y . '"' . $sel . '>' . htmlspecialchars($label) . '</option>';
+                                }
+                                ?>
+                            </select>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Semester</label>

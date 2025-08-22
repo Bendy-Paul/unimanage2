@@ -3,7 +3,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 $user = $_SESSION['user'] ?? null;
-if(!$user || $user['role'] !== 'student') {
+if(isset($user) && $user['role'] == 'admin') {
     header('Location: ../index.php');
     exit();
 }

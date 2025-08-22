@@ -115,7 +115,7 @@
                                 <i class="bi bi-bookmark-star-fill me-2"></i>Set <?php echo htmlspecialchars($student['year'] ?? ''); ?>
                             </span>
                             <span class="badge bg-light text-dark px-3 py-2 mb-2 ms-2">
-                                <i class="bi bi-calendar-check me-2"></i><?php echo $student['department_name'] ?>
+                                <i class="bi bi-calendar-check me-2"></i><?php echo htmlspecialchars($student['department_name'] ?? '')?>
                             </span>
                         </div>
                     </div>

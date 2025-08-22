@@ -11,6 +11,10 @@ $departments = db_query("SELECT * FROM departments")->fetchAll();
 // Load courses for selection/autofill
 $courses = db_query("SELECT course_id, course_code, course_name, credit_hours, semester FROM courses ORDER BY course_name")->fetchAll();
 
+// validate against current academic year
+$ayRow = db_query("SELECT academic_year FROM academic_year WHERE id = 1 LIMIT 1")->fetch();
+$currentAcademicYear = $ayRow['academic_year'] ?? (int)date('Y');
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $course_code = trim($_POST['course_code'] ?? '');
     $student_id = trim($_POST['student_id'] ?? '');
@@ -24,6 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     $academic_year = $_POST['academic_year'] ?? '';
+
+    if ($academic_year !== null && $academic_year !== '') {
+        $selectedAy = intval($academic_year);
+        if ($selectedAy > $currentAcademicYear) {
+            $errors['academic_year'] = 'Academic year cannot be greater than current academic year.';
+        }
+    }
     $semester = $_POST['semester'] ?? '';
     $credits = $_POST['credits'] ?? null;
     $department_id = $_POST['department_id'] ?? null;
@@ -93,7 +104,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Academic Year</label>
-                            <input type="number" name="academic_year" class="form-control" value="<?= htmlspecialchars($_POST['academic_year'] ?? '') ?>">
+                            <select name="academic_year" class="form-select <?= isset($errors['academic_year']) ? 'is-invalid' : '' ?>">
+                                <option value="">-- Select Year --</option>
+                                <?php
+                                $start = (int)($currentAcademicYear);
+                                $selectedVal = $_POST['academic_year'] ?? '';
+                                for ($i = 0; $i <= 10; $i++) {
+                                    $y = $start - $i;
+                                    $label = $y . '/' . ($y + 1);
+                                    $sel = ($selectedVal == $y) ? ' selected' : '';
+                                    echo '<option value="' . $y . '"' . $sel . '>' . htmlspecialchars($label) . '</option>';
+                                }
+                                ?>
+                            </select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Semester</label>
@@ -108,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label class="form-label">Marks *</label>
                         <input type="number" step="0.01" name="marks" class="form-control <?= isset($errors['marks']) ? 'is-invalid' : '' ?>" value="<?= htmlspecialchars($_POST['marks'] ?? '') ?>" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label">Grade</label>
                         <select name="grade" class="form-control">

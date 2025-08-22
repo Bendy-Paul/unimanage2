@@ -8,13 +8,11 @@ $courses = [];
 $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 if ($user) {
-    echo '<!-- User is logged in -->';
     // Get student's department ID
     $deptId = $user['department_id'] ?? null;
-    $studentId =$user['id'] ?? $user['user_id'] ?? null;
+    $studentId =$user['id'] ?? $user['user_id'] ?? null;     
     
 
-// ...existing code...
     if ($studentId) {  
 
         // Determine student year (default to 3)

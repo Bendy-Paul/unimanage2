@@ -15,7 +15,7 @@ if ($user) {
     
 
 // ...existing code...
-    if ($studentId) {
+    if ($studentId) {  
 
         // Determine student year (default to 3)
         if (isset($user['year'])) {

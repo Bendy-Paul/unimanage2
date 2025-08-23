@@ -134,7 +134,7 @@ if(!$user || $user['role'] !== 'admin') {
             </li>
 
             <!-- Departments Dropdown -->
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <span class="nav-link dropdown-btn" data-bs-toggle="collapse" href="#departmentsSubmenu" role="button">
                     <i class="bi bi-building"></i>
                     Departments
@@ -147,7 +147,7 @@ if(!$user || $user['role'] !== 'admin') {
                         <i class="bi bi-plus-circle"></i> Add Department
                     </a>
                 </div>
-            </li>
+            </li> -->
             
             <!-- Academic Year (admin-only edit) -->
             <li class="nav-item">

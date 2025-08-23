@@ -64,7 +64,7 @@ if(isset($user) && $user['role'] == 'admin') {
                     
                     <li class="nav-item">
                         <a class="nav-link" href="../student/profile.php">
-                            <i class="bi bi-person"></i> Profile
+                            <i class="bi bi-person"> Profile</i>
                         </a>
                     </li>
                 </ul>

@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        db_query('UPDATE users SET name = ?, email = ?, contact = ? WHERE user_id = ? OR id = ?', [$name, $email, $contact, $userId, $userId]);
+        db_query('UPDATE users SET name = ?, email = ?, contact = ? WHERE user_id = ?', [$name, $email, $contact, $userId]);
 
         if (!empty($_POST['new_password'])) {
             $new = $_POST['new_password'];
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="d-flex">
     <div class="main-content w-100" id="mainContent">
 
-        <?php include_once('../includes/navbar.php') ?>
+        <?php include_once('../includes/navbar.php'); ?>
 
         <div class="container-fluid mt-4">
             <h3>My Profile</h3>
